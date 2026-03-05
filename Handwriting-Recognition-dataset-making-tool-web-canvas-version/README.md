@@ -1,7 +1,7 @@
 
 # Handwriting Recognition Dataset Making Tool (Web Canvas Version)
 
-This project is a web-based drawing canvas for creating and labeling handwriting samples, designed for building datasets for handwriting recognition. Built from scratch using HTML, CSS, and JavaScript, it allows users to draw freely, label their drawings, and export the data as structured JSON files for machine learning or analysis.
+This project is a web-based drawing canvas for creating and labelling handwriting samples, designed for building datasets for handwriting recognition. Built from scratch using HTML, CSS, and JavaScript, it allows users to draw freely, label their drawings, and export the data as structured JSON files for machine learning or analysis.
 
 ## Features
 - Draw on the canvas using your mouse
@@ -16,8 +16,8 @@ This project is a web-based drawing canvas for creating and labeling handwriting
 ## How to Use
 1. Click and drag your mouse on the canvas to draw.
 2. Use the mouse wheel to increase or decrease the width of the lines as you draw.
-3. Click **CLEAR ALL** to reset the canvas and start over.
-4. When finished, click **DOWNLOAD JSON**. Enter a label (e.g., "5", "plus", "x") when prompted.
+3. Click **CLEAR ALL** or **c letter** to reset the canvas and start over.
+4. When finished, click **DOWNLOAD JSON** or the **v letter**. Enter a label (e.g., "5", "plus", "x") when prompted.
 5. The drawing and its metadata will be saved as a JSON file, ready for use in dataset creation.
 
 
