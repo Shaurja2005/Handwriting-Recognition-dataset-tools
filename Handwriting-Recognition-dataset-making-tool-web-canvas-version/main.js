@@ -137,3 +137,11 @@ downloadBtn.addEventListener("click", () => {
   
   console.log(`Downloaded: ${filename} with ${allStrokes.length} strokes`);
 });
+document.addEventListener("keydown", function (event) {
+  if (event.key === "c") {
+    document.getElementById("clearBTN").click();
+  }
+  if (event.key === "v") {
+    document.getElementById("downloadBTN").click();
+  }
+});
