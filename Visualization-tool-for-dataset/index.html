@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Data Visualizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Training Data Visualizer</h1>
+        <p>Upload a JSON file to verify the stroke data.</p>
+        
+        <input type="file" id="fileInput" accept=".json">
+
+        <div id="infoBox" class="file-info"></div>
+
+        <canvas id="visCanvas" width="500" height="500"></canvas>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
