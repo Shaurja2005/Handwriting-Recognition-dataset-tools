@@ -1,7 +1,7 @@
 import os
 import json
 
-folder_path = r"E:\projects\Handwritten-Mathematical-equation-solver\cleaned-dataset\Variables\sym(x)"   # folder containing the JSON files
+folder_path = r"E:\Handwritten-Mathematical-equation-solver\data\cleaned-dataset\Symbols\div"   # folder containing the JSON files
 
 for filename in os.listdir(folder_path):
     if filename.endswith(".json"):
@@ -10,7 +10,7 @@ for filename in os.listdir(folder_path):
         with open(path, "r") as f:
             data = json.load(f)
 
-        data["label"] = r"x"
+        data["label"] = r"\div"
 
         with open(path, "w") as f:
             json.dump(data, f, indent=2)

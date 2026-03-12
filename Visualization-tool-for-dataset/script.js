@@ -1,6 +1,7 @@
 const fileInput = document.getElementById("fileInput");
 const gallery = document.getElementById("gallery");
 const emptyMsg = document.getElementById("emptyMsg");
+const resetBtn = document.getElementById("resetBtn");
 
 // In-memory list of loaded entries: { filename, data }
 let loadedFiles = [];
@@ -34,15 +35,23 @@ fileInput.addEventListener("change", (event) => {
   fileInput.value = "";
 });
 
+// Reset button handler
+resetBtn.addEventListener("click", () => {
+  loadedFiles = [];
+  renderGallery();
+});
+
 function renderGallery() {
   gallery.innerHTML = "";
 
   if (loadedFiles.length === 0) {
     emptyMsg.style.display = "block";
+    resetBtn.style.display = "none";
     return;
   }
 
   emptyMsg.style.display = "none";
+  resetBtn.style.display = "inline-block";
 
   loadedFiles.forEach((entry, index) => {
     const card = createCard(entry, index);
