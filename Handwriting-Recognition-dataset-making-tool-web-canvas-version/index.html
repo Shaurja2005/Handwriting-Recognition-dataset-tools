@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="styles.css">
+    <title>CANVAS</title>
+</head>
+<body>
+    <canvas id="graphics"></canvas>
+    <div class="controls">
+        <button id="clearBTN"  accesskey="c"  type="button">CLEAR ALL</button>
+        <button id="downloadBTN" accesskey="v        document.addEventListener('keydown', function(event) {
+            if (event.key === 'c') {
+                document.getElementById('clearBTN').click();
+            }
+            if (event.key === 'd') {
+                document.getElementById('downloadBTN').click();
+            }
+        });" type="button">DOWNLOAD JSON</button>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>

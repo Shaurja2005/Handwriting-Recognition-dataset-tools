@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Batch JSON Label Checker</title>
+    <style>
+      :root {
+        --bg: #f7f4ed;
+        --card: #fffaf0;
+        --ink: #1f2430;
+        --muted: #5a6270;
+        --accent: #d35400;
+        --accent-soft: #ffe3cf;
+        --good: #1f7a1f;
+        --bad: #b42318;
+        --border: #d7cfbf;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 20% 20%, #fff2d8 0%, transparent 35%),
+          radial-gradient(circle at 80% 10%, #ffd8b8 0%, transparent 30%),
+          radial-gradient(circle at 85% 90%, #ffe9c7 0%, transparent 35%),
+          var(--bg);
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .app {
+        width: min(880px, 100%);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 14px 28px rgba(31, 36, 48, 0.08);
+        overflow: hidden;
+        animation: rise 400ms ease-out;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .header {
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--border);
+        background: linear-gradient(90deg, #fff0d6, #ffe8c8);
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 1.3rem;
+      }
+
+      .header p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .content {
+        padding: 20px 22px 24px;
+        display: grid;
+        gap: 16px;
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+
+      .field label {
+        font-weight: 600;
+        font-size: 0.94rem;
+      }
+
+      input[type="text"],
+      input[type="file"] {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #fff;
+        padding: 10px 12px;
+        font-size: 1rem;
+        color: var(--ink);
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      button {
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 0.98rem;
+        cursor: pointer;
+        transition:
+          transform 120ms ease,
+          opacity 120ms ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      .primary {
+        background: var(--accent);
+        color: white;
+      }
+
+      .secondary {
+        background: var(--accent-soft);
+        color: #7a3200;
+      }
+
+      .status {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+        background: #fff;
+        color: var(--muted);
+      }
+
+      .status.good {
+        color: var(--good);
+        border-color: #b7e2b7;
+        background: #f3fff3;
+      }
+
+      .status.bad {
+        color: var(--bad);
+        border-color: #f4b8b8;
+        background: #fff5f5;
+      }
+
+      .results {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #fff;
+        max-height: 280px;
+        overflow: auto;
+        padding: 10px 12px;
+      }
+
+      .results h2 {
+        margin: 0 0 8px;
+        font-size: 1rem;
+      }
+
+      .results ul {
+        margin: 0;
+        padding-left: 18px;
+        display: grid;
+        gap: 6px;
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      @media (max-width: 640px) {
+        .header h1 {
+          font-size: 1.1rem;
+        }
+        .content {
+          padding: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <section class="header">
+        <h1>Batch JSON Label Checker</h1>
+        <p>
+          Upload multiple JSON files, enter a target label, and find filenames
+          that do not match.
+        </p>
+      </section>
+
+      <section class="content">
+        <div class="field">
+          <label for="targetLabel">Target label</label>
+          <input id="targetLabel" type="text" placeholder="Example: +" />
+        </div>
+
+        <div class="field">
+          <label for="fileInput">JSON files</label>
+          <input
+            id="fileInput"
+            type="file"
+            accept=".json,application/json"
+            multiple
+          />
+        </div>
+
+        <div class="actions">
+          <button id="checkBtn" class="primary" type="button">
+            Check Files
+          </button>
+          <button id="clearBtn" class="secondary" type="button">Clear</button>
+        </div>
+
+        <div id="status" class="status">Waiting for input.</div>
+
+        <section class="results">
+          <h2>Mismatched Files</h2>
+          <ul id="resultList"></ul>
+        </section>
+
+        <p class="hint">
+          Files with missing/invalid JSON are also shown as mismatches.
+        </p>
+      </section>
+    </main>
+
+    <script>
+      const targetLabelInput = document.getElementById("targetLabel");
+      const fileInput = document.getElementById("fileInput");
+      const checkBtn = document.getElementById("checkBtn");
+      const clearBtn = document.getElementById("clearBtn");
+      const statusBox = document.getElementById("status");
+      const resultList = document.getElementById("resultList");
+
+      function setStatus(text, type) {
+        statusBox.textContent = text;
+        statusBox.className = "status" + (type ? " " + type : "");
+      }
+
+      function clearResults() {
+        resultList.innerHTML = "";
+      }
+
+      function addResult(text) {
+        const li = document.createElement("li");
+        li.textContent = text;
+        resultList.appendChild(li);
+      }
+
+      async function readJsonFile(file) {
+        const text = await file.text();
+        return JSON.parse(text);
+      }
+
+      async function checkFiles() {
+        clearResults();
+
+        const target = targetLabelInput.value;
+        const files = Array.from(fileInput.files || []);
+
+        if (!target) {
+          setStatus("Enter a target label first.", "bad");
+          return;
+        }
+
+        if (files.length === 0) {
+          setStatus("Select one or more JSON files.", "bad");
+          return;
+        }
+
+        const mismatched = [];
+
+        for (const file of files) {
+          try {
+            const data = await readJsonFile(file);
+            if (!data || String(data.label) !== target) {
+              mismatched.push(file.name);
+            }
+          } catch {
+            mismatched.push(file.name + " (invalid JSON)");
+          }
+        }
+
+        if (mismatched.length === 0) {
+          setStatus("All checked files match label: " + target, "good");
+          addResult("None. Every file has matching label.");
+        } else {
+          setStatus(
+            mismatched.length + " file(s) do not match label: " + target,
+            "bad",
+          );
+          for (const name of mismatched) {
+            addResult(name);
+          }
+        }
+      }
+
+      function clearAll() {
+        targetLabelInput.value = "";
+        fileInput.value = "";
+        clearResults();
+        setStatus("Waiting for input.");
+      }
+
+      checkBtn.addEventListener("click", checkFiles);
+      clearBtn.addEventListener("click", clearAll);
+    </script>
+  </body>
+</html>
