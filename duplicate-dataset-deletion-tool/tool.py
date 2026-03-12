@@ -9,7 +9,6 @@ def remove_duplicate_drawings(dataset_folder):
     deleted_count = 0
     scanned_count = 0
     
-    # Loop through all files in the folder
     for filename in os.listdir(dataset_folder):
         if not filename.endswith(".json"):
             continue
@@ -18,27 +17,21 @@ def remove_duplicate_drawings(dataset_folder):
         scanned_count += 1
         
         try:
-            # Open and read the JSON file
             with open(filepath, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 
-            # Extract the actual drawing data
             strokes = data.get("strokes", [])
             
-            # Convert the strokes list into a standardized string
             strokes_string = json.dumps(strokes, sort_keys=True)
             
-            # Create a unique MD5 hash (fingerprint) of the drawing
             fingerprint = hashlib.md5(strokes_string.encode('utf-8')).hexdigest()
             
-            # Check if we have seen this exact drawing before
             if fingerprint in seen_fingerprints:
                 # It's a duplicate! Delete the file.
                 os.remove(filepath)
                 deleted_count += 1
                 print(f"🗑️ Deleted duplicate: {filename}")
             else:
-                # It's a brand new drawing. Remember its fingerprint.
                 seen_fingerprints.add(fingerprint)
                 
         except json.JSONDecodeError:
